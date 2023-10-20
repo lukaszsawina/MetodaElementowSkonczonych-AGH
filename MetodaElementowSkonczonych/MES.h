@@ -20,6 +20,13 @@ struct GlobalData {
 	void showGlobalData();
 };
 
+struct ElementUniwersalny {
+	double** matdEta;
+	double** matdKsi;
+
+	void init(int n);
+};
+
 struct node {
 	double x, y;
 };

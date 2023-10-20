@@ -14,6 +14,29 @@ void GlobalData::showGlobalData()
 	std::cout << ElementsNumber << std::endl;
 }
 
+void ElementUniwersalny::init(int n)
+{
+	int nPktCalk = pow(n, 2);
+
+	matdEta = new double* [nPktCalk];
+	matdKsi = new double* [nPktCalk];
+
+	for (int i = 0; i < nPktCalk; i++)
+	{
+		matdEta[i] = new double[4];
+		matdKsi[i] = new double[4];
+	}
+
+
+	for (int i = 0; i < nPktCalk; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+
+		}
+	}
+}
+
 GlobalData* readMesh(std::string fileSrc)
 {
 	GlobalData* output = new GlobalData;
