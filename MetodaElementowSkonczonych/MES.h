@@ -23,7 +23,7 @@ struct GlobalData {
 struct ElementUniwersalny {
 	double** matdEta;
 	double** matdKsi;
-
+	int nPkt;
 	void init(int n);
 };
 
