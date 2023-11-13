@@ -1,0 +1,73 @@
+# Katalogi wygenerowane przez kompilację
+bin/
+build/
+out/
+
+# Pliki wykonywalne
+*.exe
+*.out
+
+# Pliki obiektowe i pliki pośrednie
+*.o
+*.obj
+
+# Katalogi wygenerowane przez CMake
+CMakeFiles/
+CMakeScripts/
+CMakeCache.txt
+cmake_install.cmake
+CMakeSettings.json
+
+# Katalog projektu w Visual Studio Code
+.vscode/
+
+# Katalogi i pliki projektu w Xcode
+*.xcworkspace/
+*.xcodeproj/
+
+# Katalogi i pliki dla różnych IDE
+.idea/
+*.suo
+*.user
+*.userprefs
+*.sln
+*.suo
+*.user
+*.userprefs
+
+# Katalogi wygenerowane przez Eclipse
+bin/
+tmp/
+*.pydevproject
+*.project
+*.metadata
+*.tmp
+*.bak
+*.swp
+*~
+
+# Pliki wygenerowane przez różne narzędzia
+tags
+TAGS
+*.tags
+cscope.*
+*.cscope
+*.cproject
+*.project
+*.settings
+*.tmproj
+nbproject/
+*.opendb
+*.depend
+*.layout
+*.gdb_history
+*.d
+*.pyc
+*.pyo
+*.rej
+*.log
+*.dll
+*.so
+*.dylib
+*.class
+*.jar
