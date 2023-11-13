@@ -21,14 +21,26 @@ struct GlobalData {
 	int ElementsNumber;
 };
 
+struct ElementUniwersalny {
+	double** matdEta;
+	double** matdKsi;
+	int nPkt;
+	void init(int n);
+};
+
+
 struct Node {
 	int ID;
 	double x, y;
+	int BC = 0; //Czy jest warunkiem brzegowym i jakim
 };
 
 struct Element {
 	int ID;
 	int ID_wezlow[4];
+	double** H;
+
+	void calcH(double* x, double* y, ElementUniwersalny elUni);
 };
 
 struct Grid
@@ -48,17 +60,11 @@ struct Mesh
 	void showNodes();
 	void showElements();
 
+	void calcHForNodes(ElementUniwersalny elUni);
+
 private:
 	GlobalData* readMeshGlobalData(std::string fileSrc);
 	Node* readMeshNodes(std::string fileSrc);
 	Element* readMeshElements(std::string fileSrc);
-};
-
-struct ElementUniwersalny {
-	double** matdEta;
-	double** matdKsi;
-	int nPkt;
-	void init(int n);
-	double** H(double* x, double* y);
 };
 

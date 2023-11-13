@@ -18,8 +18,7 @@ void Mesh::showNodes()
 {
 	std::cout << std::setprecision(10);
 	for (int i = 0; i < globalData->NodesNumber; i++)
-		std::cout << "ID: " << nodes[i].ID << " X: " << nodes[i].x << " Y: " << nodes[i].y << std::endl;
-		
+		std::cout << "ID: " << nodes[i].ID << " X: " << nodes[i].x << " Y: " << nodes[i].y << " BC: " << nodes[i].BC << std::endl;	
 }
 
 void Mesh::showElements()
@@ -69,12 +68,12 @@ void ElementUniwersalny::init(int n)
 	delete[] G_X;
 }
 
-double** ElementUniwersalny::H(double* x, double* y)
+void Element::calcH(double* x, double* y, ElementUniwersalny elUni)
 {
 	std::vector<double**> macierzeJakobiegoPunktow;
 	std::vector<double> detJPunktow;
 
-	for (int i = 0; i < pow(nPkt, 2); i++)
+	for (int i = 0; i < pow(elUni.nPkt, 2); i++)
 	{
 		double** macierzJakobiego = new double* [2];
 
@@ -84,10 +83,10 @@ double** ElementUniwersalny::H(double* x, double* y)
 		}
 
 		//Liczenie macierzy jakobiego dla pc[i]
-		macierzJakobiego[0][0] = matdEta[i][0] * y[0] + matdEta[i][1] * y[1] + matdEta[i][2] * y[2] + matdEta[i][3] * y[3];
-		macierzJakobiego[0][1] = -1 * (matdKsi[i][0] * y[0] + matdKsi[i][1] * y[1] + matdKsi[i][2] * y[2] + matdKsi[i][3] * y[3]);
-		macierzJakobiego[1][0] = -1 * (matdEta[i][0] * x[0] + matdEta[i][1] * x[1] + matdEta[i][2] * x[2] + matdEta[i][3] * x[3]);
-		macierzJakobiego[1][1] = matdKsi[i][0] * x[0] + matdKsi[i][1] * x[1] + matdKsi[i][2] * x[2] + matdKsi[i][3] * x[3];
+		macierzJakobiego[0][0] = elUni.matdEta[i][0] * y[0] + elUni.matdEta[i][1] * y[1] + elUni.matdEta[i][2] * y[2] + elUni.matdEta[i][3] * y[3];
+		macierzJakobiego[0][1] = -1 * (elUni.matdKsi[i][0] * y[0] + elUni.matdKsi[i][1] * y[1] + elUni.matdKsi[i][2] * y[2] + elUni.matdKsi[i][3] * y[3]);
+		macierzJakobiego[1][0] = -1 * (elUni.matdEta[i][0] * x[0] + elUni.matdEta[i][1] * x[1] + elUni.matdEta[i][2] * x[2] + elUni.matdEta[i][3] * x[3]);
+		macierzJakobiego[1][1] = elUni.matdKsi[i][0] * x[0] + elUni.matdKsi[i][1] * x[1] + elUni.matdKsi[i][2] * x[2] + elUni.matdKsi[i][3] * x[3];
 
 		macierzeJakobiegoPunktow.push_back(macierzJakobiego);
 
@@ -146,15 +145,15 @@ double** ElementUniwersalny::H(double* x, double* y)
 	//Liczenie wartoœci macierzy dx i dy
 	for (int i = 0; i < 4; i++)
 	{
-		matdx[i][0] = macierzeJakobiegoPunktow[i][0][0] * matdKsi[i][0] + macierzeJakobiegoPunktow[i][0][1] * matdEta[i][0];
-		matdx[i][1] = macierzeJakobiegoPunktow[i][0][0] * matdKsi[i][1] + macierzeJakobiegoPunktow[i][0][1] * matdEta[i][1];
-		matdx[i][2] = macierzeJakobiegoPunktow[i][0][0] * matdKsi[i][2] + macierzeJakobiegoPunktow[i][0][1] * matdEta[i][2];
-		matdx[i][3] = macierzeJakobiegoPunktow[i][0][0] * matdKsi[i][3] + macierzeJakobiegoPunktow[i][0][1] * matdEta[i][3];
+		matdx[i][0] = macierzeJakobiegoPunktow[i][0][0] * elUni.matdKsi[i][0] + macierzeJakobiegoPunktow[i][0][1] * elUni.matdEta[i][0];
+		matdx[i][1] = macierzeJakobiegoPunktow[i][0][0] * elUni.matdKsi[i][1] + macierzeJakobiegoPunktow[i][0][1] * elUni.matdEta[i][1];
+		matdx[i][2] = macierzeJakobiegoPunktow[i][0][0] * elUni.matdKsi[i][2] + macierzeJakobiegoPunktow[i][0][1] * elUni.matdEta[i][2];
+		matdx[i][3] = macierzeJakobiegoPunktow[i][0][0] * elUni.matdKsi[i][3] + macierzeJakobiegoPunktow[i][0][1] * elUni.matdEta[i][3];
 
-		matdy[i][0] = macierzeJakobiegoPunktow[i][1][0] * matdKsi[i][0] + macierzeJakobiegoPunktow[i][1][1] * matdEta[i][0];
-		matdy[i][1] = macierzeJakobiegoPunktow[i][1][0] * matdKsi[i][1] + macierzeJakobiegoPunktow[i][1][1] * matdEta[i][1];
-		matdy[i][2] = macierzeJakobiegoPunktow[i][1][0] * matdKsi[i][2] + macierzeJakobiegoPunktow[i][1][1] * matdEta[i][2];
-		matdy[i][3] = macierzeJakobiegoPunktow[i][1][0] * matdKsi[i][3] + macierzeJakobiegoPunktow[i][1][1] * matdEta[i][3];
+		matdy[i][0] = macierzeJakobiegoPunktow[i][1][0] * elUni.matdKsi[i][0] + macierzeJakobiegoPunktow[i][1][1] * elUni.matdEta[i][0];
+		matdy[i][1] = macierzeJakobiegoPunktow[i][1][0] * elUni.matdKsi[i][1] + macierzeJakobiegoPunktow[i][1][1] * elUni.matdEta[i][1];
+		matdy[i][2] = macierzeJakobiegoPunktow[i][1][0] * elUni.matdKsi[i][2] + macierzeJakobiegoPunktow[i][1][1] * elUni.matdEta[i][2];
+		matdy[i][3] = macierzeJakobiegoPunktow[i][1][0] * elUni.matdKsi[i][3] + macierzeJakobiegoPunktow[i][1][1] * elUni.matdEta[i][3];
 	}
 
 	//Zwolnienei pamiêci z macierzyJakobiegoPunktów
@@ -184,7 +183,7 @@ double** ElementUniwersalny::H(double* x, double* y)
 
 	std::vector<double**> macierzeHPunktow;
 
-	for (int p = 0; p < pow(nPkt, 2); p++)
+	for (int p = 0; p < pow(elUni.nPkt, 2); p++)
 	{
 		double** Hpkt = new double* [4];
 
@@ -195,10 +194,10 @@ double** ElementUniwersalny::H(double* x, double* y)
 		for (int i = 0; i < 4; i++)
 		{
 			//Wartoœæ 30 nie jest sta³a!!! pewnie bêdzie zmieniana w dalszych programach
-			Hpkt[i][0] = (matdx[p][i] * matdx[p][0] + matdy[p][i] * matdy[p][0]) * detJPunktow[p] * 30;
-			Hpkt[i][1] = (matdx[p][i] * matdx[p][1] + matdy[p][i] * matdy[p][1]) * detJPunktow[p] * 30;
-			Hpkt[i][2] = (matdx[p][i] * matdx[p][2] + matdy[p][i] * matdy[p][2]) * detJPunktow[p] * 30;
-			Hpkt[i][3] = (matdx[p][i] * matdx[p][3] + matdy[p][i] * matdy[p][3]) * detJPunktow[p] * 30;
+			Hpkt[i][0] = (matdx[p][i] * matdx[p][0] + matdy[p][i] * matdy[p][0]) * detJPunktow[p] * 25;
+			Hpkt[i][1] = (matdx[p][i] * matdx[p][1] + matdy[p][i] * matdy[p][1]) * detJPunktow[p] * 25;
+			Hpkt[i][2] = (matdx[p][i] * matdx[p][2] + matdy[p][i] * matdy[p][2]) * detJPunktow[p] * 25;
+			Hpkt[i][3] = (matdx[p][i] * matdx[p][3] + matdy[p][i] * matdy[p][3]) * detJPunktow[p] * 25;
 		}
 
 		macierzeHPunktow.push_back(Hpkt);
@@ -222,28 +221,28 @@ double** ElementUniwersalny::H(double* x, double* y)
 	}
 
 
-	double** H = new double* [4];
+	double** outputH = new double* [4];
 	for (int i = 0; i < 4; i++)
-		H[i] = new double[4];
+		outputH[i] = new double[4];
 
 	for (int i = 0; i < 4; i++)
 	{
 		for (int j = 0; j < 4; j++)
-			H[i][j] = 0;
+			outputH[i][j] = 0;
 	}
 
-	double* G_W = initWGauss(nPkt);
+	double* G_W = initWGauss(elUni.nPkt);
 
 	//Liczenie macierzy H dla elementu
-	for (int i = 0, p = 0; i < nPkt; i++)
+	for (int i = 0, p = 0; i < elUni.nPkt; i++)
 	{
-		for (int j = 0; j < nPkt; j++, p++)
+		for (int j = 0; j < elUni.nPkt; j++, p++)
 		{
 			for (int n = 0; n < 4; n++)
 				for (int m = 0; m < 4; m++)
 				{
 					macierzeHPunktow[p][n][m] *= (G_W[i] * G_W[j]);
-					H[n][m] += macierzeHPunktow[p][n][m];
+					outputH[n][m] += macierzeHPunktow[p][n][m];
 				}
 		}
 	}
@@ -262,12 +261,42 @@ double** ElementUniwersalny::H(double* x, double* y)
 	for (int i = 0; i < 4; i++)
 	{
 		for (int j = 0; j < 4; j++)
-			std::cout << H[i][j] << "\t";
+			std::cout << outputH[i][j] << "\t";
 		std::cout << std::endl;
 	}
 
-	return H;
+	H = outputH;
 }
+
+
+void Mesh::calcHForNodes(ElementUniwersalny elUni)
+{
+	for (int i = 0; i < globalData->ElementsNumber; i++)
+	{
+		std::cout << "Element: " << i+1 << std::endl;
+		double* x = new double[4];
+		double* y = new double[4];
+
+		for (int j = 0; j < 4; j++)
+		{
+			int n = elements[i].ID_wezlow[j];
+			x[j] = nodes[n-1].x;
+			y[j] = nodes[n-1].y;
+
+			std::cout << "PC " << i+1 << "(x: " << x[j] << " ; " << y[j] << ")" << std::endl;
+		}
+
+		elements[i].calcH(x, y, elUni);
+
+		delete[] x;
+		delete[] y;
+	}
+
+
+}
+
+
+
 
 GlobalData* Mesh::readMeshGlobalData(std::string fileSrc)
 {
@@ -341,8 +370,6 @@ Node* Mesh::readMeshNodes(std::string fileSrc)
 		for (int i = 0; i < globalData->NodesNumber; i++)
 		{
 			getline(file, line);
-			std::string t = line;
-
 			std::istringstream stream(line);
 			std::vector<std::string> elements;
 
@@ -357,6 +384,32 @@ Node* Mesh::readMeshNodes(std::string fileSrc)
 			output[i].ID = stoi(elements[0]);
 			output[i].x = stod(elements[1]);
 			output[i].y = stod(elements[2]);
+		}
+
+		getline(file, line);
+		while (line != "*BC")
+			getline(file, line);
+
+		std::vector<std::string> elements;
+		std::string element;
+
+		getline(file, line);
+
+		std::istringstream BCstream(line);
+
+		while (std::getline(BCstream, element, ','))
+		{
+			size_t start = element.find_first_not_of(" ");
+			size_t end = element.find_last_not_of(" ");
+			elements.push_back(element.substr(start, end - start + 1));
+		}
+
+		for (int i = 0; i < elements.size(); i++)
+		{
+			for (int j = 0; j < globalData->NodesNumber; j++)
+				if (output[j].ID == std::stoi(elements[i]))
+					output[j].BC = 1;
+
 		}
 	}
 
