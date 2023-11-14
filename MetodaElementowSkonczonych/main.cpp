@@ -169,6 +169,7 @@ int main()
 				std::cout << HBC[i][j] << "\t";
 			std::cout << std::endl;
 		}
+
 		std::cout << std::endl;
 
 	}
