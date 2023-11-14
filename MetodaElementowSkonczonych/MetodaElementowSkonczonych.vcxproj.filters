@@ -32,6 +32,9 @@
     <Text Include="Test1_4_4.txt">
       <Filter>Source Files</Filter>
     </Text>
+    <Text Include="Test2_4_4_MixGrid.txt">
+      <Filter>Source Files</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="calkowanie.h">

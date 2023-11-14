@@ -134,6 +134,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Test1_4_4.txt" />
+    <Text Include="Test2_4_4_MixGrid.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="calkowanie.h" />
