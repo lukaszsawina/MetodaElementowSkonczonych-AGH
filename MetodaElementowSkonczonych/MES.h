@@ -39,8 +39,10 @@ struct Element {
 	int ID;
 	int ID_wezlow[4];
 	double** H;
+	double** HBC;
 
 	void calcH(double* x, double* y, ElementUniwersalny elUni);
+	void calcHBC(double* x, double* y, double* BC, ElementUniwersalny elUni);
 };
 
 struct Grid
@@ -60,7 +62,8 @@ struct Mesh
 	void showNodes();
 	void showElements();
 
-	void calcHForNodes(ElementUniwersalny elUni);
+	void calcHForElements(ElementUniwersalny elUni);
+	void calcHBCForElements(ElementUniwersalny elUni);
 
 private:
 	GlobalData* readMeshGlobalData(std::string fileSrc);
