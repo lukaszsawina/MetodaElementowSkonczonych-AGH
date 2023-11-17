@@ -24,10 +24,11 @@ struct GlobalData {
 struct ElementUniwersalny {
 	double** matdEta;
 	double** matdKsi;
+	std::vector<double**> matNPktForEdges;
+	
 	int nPkt;
 	void init(int n);
 };
-
 
 struct Node {
 	int ID;
@@ -42,8 +43,10 @@ struct Element {
 	double** HBC;
 
 	void calcH(double* x, double* y, ElementUniwersalny elUni);
-	void calcHBC(double* x, double* y, double* BC, ElementUniwersalny elUni);
+	void calcHBC(double* x, double* y, int* BC, ElementUniwersalny elUni);
 };
+
+void calcVectorP(double* x, double* y, int* BC, ElementUniwersalny elUni);
 
 struct Grid
 {

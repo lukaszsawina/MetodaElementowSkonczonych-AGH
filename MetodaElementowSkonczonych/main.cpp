@@ -21,8 +21,8 @@ double funkcja_testowa_2(double x, double y) {
 
 int main()
 {
-	Mesh siatka;
-	siatka.readMeshFile("Test1_4_4.txt");
+	//Mesh siatka;
+	//siatka.readMeshFile("Test1_4_4.txt");
 	//siatka.showGlobalData();
 	//siatka.showNodes();
 	//siatka.showElements();
@@ -32,13 +32,15 @@ int main()
 
 	//siatka.calcHForNodes(elementUniwersalny);
 
-	siatka.calcHBCForElements(elementUniwersalny);
+	//siatka.calcHBCForElements(elementUniwersalny);
 
 
-	//double x[4] = { 0, 0.025, 0.025, 0 };
-	//double y[4] = { 0, 0, 0.025, 0.025 };
+	double x[4] = { 0.1, 0.05469, 0.06239, 0.1 };
+	double y[4] = { 0.005, 0.005, -0.03261, -0.04031 };
 
-	//double bc[4] = { 1,1,1,1 };
+	int bc[4] = { 1,1,0,1 };
+
+	calcVectorP(x, y, bc, elementUniwersalny);
 
 	//calcHBC(x, y, bc, elementUniwersalny);
 
@@ -53,6 +55,8 @@ int main()
 
 	//std::cout << "przestrzen 2d 3 punktowy schemat calkowania" << std::endl;
 	//std::cout << Gauss2d(funkcja_testowa_2, -1, 1, 3) << std::endl;
+
+
 
 	return 0;
 }
