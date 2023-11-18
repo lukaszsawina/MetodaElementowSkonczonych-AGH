@@ -2,7 +2,8 @@
 #include <vector>
 
 #include "calkowanie.h"
-#include "MES.h"
+#include "Mesh.h"
+#include "ElementUniwersalny.h"
 
 
 
@@ -21,8 +22,8 @@ double funkcja_testowa_2(double x, double y) {
 
 int main()
 {
-	//Mesh siatka;
-	//siatka.readMeshFile("Test1_4_4.txt");
+	Mesh siatka;
+	siatka.readMeshFile("Test2_4_4_MixGrid.txt");
 	//siatka.showGlobalData();
 	//siatka.showNodes();
 	//siatka.showElements();
@@ -30,19 +31,17 @@ int main()
 	ElementUniwersalny elementUniwersalny;
 	elementUniwersalny.init(2);
 
-	//siatka.calcHForNodes(elementUniwersalny);
+	//siatka.calcHForElements(elementUniwersalny);
 
 	//siatka.calcHBCForElements(elementUniwersalny);
 
+	//siatka.calcVectorPForElements(elementUniwersalny);
 
-	double x[4] = { 0.1, 0.05469, 0.06239, 0.1 };
-	double y[4] = { 0.005, 0.005, -0.03261, -0.04031 };
 
-	int bc[4] = { 1,1,0,1 };
 
-	calcVectorP(x, y, bc, elementUniwersalny);
 
-	//calcHBC(x, y, bc, elementUniwersalny);
+
+
 
 	//std::cout << "przestrzen 1d 2 punktowy schemat calkowania" << std::endl;
 	//std::cout << Gauss1d(funkcja_testowa_1, -1, 1, 2) << std::endl;

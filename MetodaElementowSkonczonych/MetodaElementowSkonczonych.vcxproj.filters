@@ -24,7 +24,13 @@
     <ClCompile Include="interpolacja.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MES.cpp">
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ElementUniwersalny.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Element.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -43,7 +49,19 @@
     <ClInclude Include="interpolacja.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MES.h">
+    <ClInclude Include="Mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Node.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Element.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ElementUniwersalny.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,4 +1,4 @@
-﻿  MES.cpp
-D:\DEV\MetodaElementowSkonczonych\MetodaElementowSkonczonych\MES.cpp(41,15): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-D:\DEV\MetodaElementowSkonczonych\MetodaElementowSkonczonych\MES.cpp(762,34): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+﻿  Element.cpp
+  main.cpp
+  Generating Code...
   MetodaElementowSkonczonych.vcxproj -> D:\DEV\MetodaElementowSkonczonych\x64\Debug\MetodaElementowSkonczonych.exe
