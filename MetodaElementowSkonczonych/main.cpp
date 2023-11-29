@@ -36,12 +36,13 @@ int main()
 	//siatka.calcHBCForElements(elementUniwersalny);
 
 	//siatka.calcVectorPForElements(elementUniwersalny);
+	
+	double* temperatury  = Mesh::calcTemperatureForElements(siatka, elementUniwersalny);
 
-
-
-
-
-
+	for (int i = 0; i < siatka.globalData->ElementsNumber; i++)
+	{
+		std::cout << temperatury[i] << std::endl;
+	}
 
 	//std::cout << "przestrzen 1d 2 punktowy schemat calkowania" << std::endl;
 	//std::cout << Gauss1d(funkcja_testowa_1, -1, 1, 2) << std::endl;

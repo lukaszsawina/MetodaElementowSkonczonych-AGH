@@ -133,6 +133,7 @@
     <ClCompile Include="interpolacja.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="UkladyRownan.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Test1_4_4.txt" />
@@ -146,6 +147,7 @@
     <ClInclude Include="interpolacja.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Node.h" />
+    <ClInclude Include="UkladyRownan.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

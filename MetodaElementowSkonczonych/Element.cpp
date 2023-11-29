@@ -294,7 +294,7 @@ void Element::calcHBC(double* x, double* y, int* BC, const ElementUniwersalny& e
 			{
 				for (int k = 0; k < 4; k++)
 				{
-					HBCEdge[i][k] += elUni.matNPktForEdges[p][j][i] * elUni.matNPktForEdges[p][j][k] * G_W[j] * 25.;
+					HBCEdge[i][k] += elUni.matNPktForEdges[p][j][i] * elUni.matNPktForEdges[p][j][k] * G_W[j] * 300.;
 				}
 			}
 

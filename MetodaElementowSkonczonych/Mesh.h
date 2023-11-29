@@ -7,6 +7,7 @@
 #include <sstream>
 
 #include "calkowanie.h"
+#include "UkladyRownan.h"
 #include "GlobalData.h"
 #include "Element.h"
 #include "ElementUniwersalny.h"
@@ -26,6 +27,8 @@ struct Mesh
 	void calcHForElements(const ElementUniwersalny& elUni);
 	void calcHBCForElements(const ElementUniwersalny& elUni);
 	void calcVectorPForElements(const ElementUniwersalny& elUni);
+
+	static double* calcTemperatureForElements(Mesh& mesh, const ElementUniwersalny& elUni);
 
 	~Mesh();
 

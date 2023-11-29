@@ -33,6 +33,9 @@
     <ClCompile Include="Element.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="UkladyRownan.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Test1_4_4.txt">
@@ -62,6 +65,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ElementUniwersalny.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UkladyRownan.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
