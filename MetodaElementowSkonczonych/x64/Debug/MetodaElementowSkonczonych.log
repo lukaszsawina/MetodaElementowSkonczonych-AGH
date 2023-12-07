@@ -1,6 +1,3 @@
-﻿  Element.cpp
-  Mesh.cpp
-D:\DEV\MetodaElementowSkonczonych\MetodaElementowSkonczonych\Mesh.cpp(262,34): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-  main.cpp
-  Generating Code...
+﻿  Mesh.cpp
+D:\DEV\MetodaElementowSkonczonych\MetodaElementowSkonczonych\Mesh.cpp(284,34): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
   MetodaElementowSkonczonych.vcxproj -> D:\DEV\MetodaElementowSkonczonych\x64\Debug\MetodaElementowSkonczonych.exe

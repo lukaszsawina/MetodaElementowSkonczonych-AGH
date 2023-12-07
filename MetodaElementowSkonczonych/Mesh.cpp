@@ -107,6 +107,28 @@ void Mesh::calcVectorPForElements(const ElementUniwersalny& elUni)
 	}
 }
 
+void Mesh::calcCForElements(const ElementUniwersalny& elUni)
+{
+	for (int i = 0; i < globalData->ElementsNumber; i++)
+	{
+		std::cout << std::endl << "Element: " << i + 1 << std::endl;
+		double* x = new double[4];
+		double* y = new double[4];
+
+		for (int j = 0; j < 4; j++)
+		{
+			int n = elements[globalData->ElementsNumber - 1 - i].ID_wezlow[j];
+			x[j] = nodes[n - 1].x;
+			y[j] = nodes[n - 1].y;
+		}
+
+		elements[i].calcC(x, y, elUni);
+
+		delete[] x;
+		delete[] y;
+	}
+}
+
 GlobalData* Mesh::readMeshGlobalData(std::string fileSrc)
 {
 	GlobalData* output = new GlobalData;
@@ -301,7 +323,7 @@ Mesh::~Mesh()
 	delete globalData;
 }
 
-double* Mesh::calcTemperatureForElements(Mesh& mesh, const ElementUniwersalny& elUni)
+double* Mesh::calcTemperature(Mesh& mesh, const ElementUniwersalny& elUni)
 {
 	int nNodes = mesh.globalData->NodesNumber;
 
@@ -315,6 +337,16 @@ double* Mesh::calcTemperatureForElements(Mesh& mesh, const ElementUniwersalny& e
 			agregatH[i][j] = 0;
 	}
 
+	double** agregatC = new double* [nNodes];
+
+	for (int i = 0; i < nNodes; i++)
+	{
+		agregatC[i] = new double[nNodes];
+
+		for (int j = 0; j < nNodes; j++)
+			agregatC[i][j] = 0;
+	}
+
 	double* agregatP = new double[nNodes];
 
 	for (int i = 0; i < nNodes; i++)
@@ -325,6 +357,7 @@ double* Mesh::calcTemperatureForElements(Mesh& mesh, const ElementUniwersalny& e
 	mesh.calcHForElements(elUni);
 	mesh.calcHBCForElements(elUni);
 	mesh.calcVectorPForElements(elUni);
+	mesh.calcCForElements(elUni);
 
 	//Liczenie agregatu H
 	int nElements = mesh.globalData->ElementsNumber;
@@ -337,6 +370,8 @@ double* Mesh::calcTemperatureForElements(Mesh& mesh, const ElementUniwersalny& e
 			{
 				agregatH[mesh.elements[e].ID_wezlow[i] - 1][mesh.elements[e].ID_wezlow[j] - 1] += mesh.elements[e].H[i][j];
 				agregatH[mesh.elements[e].ID_wezlow[i] - 1][mesh.elements[e].ID_wezlow[j] - 1] += mesh.elements[e].HBC[i][j];
+				agregatH[mesh.elements[e].ID_wezlow[i] - 1][mesh.elements[e].ID_wezlow[j] - 1] += mesh.elements[e].C[i][j] / 50;
+				agregatC[mesh.elements[e].ID_wezlow[i] - 1][mesh.elements[e].ID_wezlow[j] - 1] += mesh.elements[e].C[i][j] / 50;
 			}
 		}
 	}
@@ -350,6 +385,24 @@ double* Mesh::calcTemperatureForElements(Mesh& mesh, const ElementUniwersalny& e
 		std::cout << std::endl;
 	}
 
+	double* agregatBC = new double[nNodes];
+
+	for (int i = 0; i < nNodes; i++)
+	{
+		agregatBC[i] = 0;
+	}
+
+	for (int i = 0; i < nNodes; i++)
+	{
+		double temp = 0;
+		for (int j = 0; j < nNodes; j++)
+		{
+			temp += agregatC[i][j] * 100;
+			std::cout << agregatC[i][j] << " ";
+		}
+		agregatBC[i] = temp;
+	}
+
 	//Liczenie agregatu P
 	for (int e = 0; e < nElements; e++)
 	{
@@ -359,14 +412,19 @@ double* Mesh::calcTemperatureForElements(Mesh& mesh, const ElementUniwersalny& e
 		}
 	}
 
-	std::cout << std::endl << "Agregat P" << std::endl;
+	for (int i = 0; i < nNodes; i++)
+	{
+		agregatBC[i] += agregatP[i];
+	}
+
+	std::cout << std::endl << "Agregat BC" << std::endl;
 
 	for (int i = 0; i < nNodes; i++)
 	{
-		std::cout << agregatP[i] << std::endl;
+		std::cout << agregatBC[i] << std::endl;
 	}
 
 	std::cout << std::endl << "Temperatury" << std::endl;
 
-	return ElimGauss(agregatH, agregatP, nNodes);	
+	return ElimGauss(agregatH, agregatBC, nNodes);
 }

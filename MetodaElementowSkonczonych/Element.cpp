@@ -457,3 +457,95 @@ void Element::calcVectorP(double* x, double* y, int* BC, const ElementUniwersaln
 
 	VectorP = wynik;
 }
+
+void Element::calcC(double* x, double* y, const ElementUniwersalny& elUni)
+{
+	std::vector<double**> macierzeJakobiegoPunktow;
+	std::vector<double> detJPunktow;
+
+	for (int i = 0; i < pow(elUni.nPkt, 2); i++)
+	{
+		double** macierzJakobiego = new double* [2];
+
+		for (int i = 0; i < 2; i++)
+		{
+			macierzJakobiego[i] = new double[2];
+		}
+
+		//Liczenie macierzy jakobiego dla pc[i]
+		macierzJakobiego[0][0] = elUni.matdEta[i][0] * y[0] + elUni.matdEta[i][1] * y[1] + elUni.matdEta[i][2] * y[2] + elUni.matdEta[i][3] * y[3];
+		macierzJakobiego[0][1] = -1 * (elUni.matdKsi[i][0] * y[0] + elUni.matdKsi[i][1] * y[1] + elUni.matdKsi[i][2] * y[2] + elUni.matdKsi[i][3] * y[3]);
+		macierzJakobiego[1][0] = -1 * (elUni.matdEta[i][0] * x[0] + elUni.matdEta[i][1] * x[1] + elUni.matdEta[i][2] * x[2] + elUni.matdEta[i][3] * x[3]);
+		macierzJakobiego[1][1] = elUni.matdKsi[i][0] * x[0] + elUni.matdKsi[i][1] * x[1] + elUni.matdKsi[i][2] * x[2] + elUni.matdKsi[i][3] * x[3];
+
+		macierzeJakobiegoPunktow.push_back(macierzJakobiego);
+
+		double detJ = macierzJakobiego[0][0] * macierzJakobiego[1][1] - (macierzJakobiego[1][0] * macierzJakobiego[0][1]);
+		detJPunktow.push_back(detJ);
+	}
+
+	//Przemno¿enie przez 1/detJ
+	for (int i = 0; i < macierzeJakobiegoPunktow.size(); i++)
+	{
+		for (int j = 0; j < 2; j++)
+			for (int k = 0; k < 2; k++)
+				macierzeJakobiegoPunktow[i][j][k] *= (1 / detJPunktow[i]);
+	}
+
+	double** outputC = new double* [4];
+	for (int i = 0; i < 4; i++)
+		outputC[i] = new double[4];
+
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
+			outputC[i][j] = 0;
+	}
+
+	std::vector<double**> macierzeCPunktow;
+
+	for (int p = 0; p < pow(elUni.nPkt, 2); p++)
+	{
+		double** Cpkt = new double* [4];
+
+		for (int i = 0; i < 4; i++)
+			Cpkt[i] = new double[4];
+
+		//Liczenie macierzy H dla pc[i]
+		for (int i = 0; i < 4; i++)
+		{
+			Cpkt[i][0] = (elUni.N[p][i] * elUni.N[p][0]) * detJPunktow[p] * 7800 * 700;
+			Cpkt[i][1] = (elUni.N[p][i] * elUni.N[p][1]) * detJPunktow[p] * 7800 * 700;
+			Cpkt[i][2] = (elUni.N[p][i] * elUni.N[p][2]) * detJPunktow[p] * 7800 * 700;
+			Cpkt[i][3] = (elUni.N[p][i] * elUni.N[p][3]) * detJPunktow[p] * 7800 * 700;
+		}
+
+		macierzeCPunktow.push_back(Cpkt);
+	}
+
+	double* G_W = initWGauss(elUni.nPkt);
+
+	//Liczenie macierzy C dla elementu
+	for (int i = 0, p = 0; i < elUni.nPkt; i++)
+	{
+		for (int j = 0; j < elUni.nPkt; j++, p++)
+		{
+			for (int n = 0; n < 4; n++)
+				for (int m = 0; m < 4; m++)
+				{
+					macierzeCPunktow[p][n][m] *= (G_W[i] * G_W[j]);
+					outputC[n][m] += macierzeCPunktow[p][n][m];
+				}
+		}
+	}
+
+	std::cout << "Macierz C" << std::endl;
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
+			std::cout << outputC[i][j] << "\t";
+		std::cout << std::endl;
+	}
+
+	C = outputC;
+}

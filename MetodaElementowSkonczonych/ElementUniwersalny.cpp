@@ -78,6 +78,42 @@ void ElementUniwersalny::init(int n)
 		}
 		matNPktForEdges.push_back(N);
 	}
+
+	std::vector<double*> pkt;
+
+	for (int i = 0, k = 0; i < n; i++)
+	{
+
+		for (int j = 0; j < n; j++, k++)
+		{
+			double* Xpkt = new double[2];
+
+			Xpkt[0] = G_X[nPkt - j - 1];
+			Xpkt[1] = G_X[nPkt - i - 1];
+
+			pkt.push_back(Xpkt);
+		}
+	}
+
+	for(int i = 0; i < 4; i++)
+		std::cout << pkt[i][0] << " " << pkt[i][1] << std::endl;
+	
+	N = new double* [nPktCalk];
+
+	for (int i = 0; i < nPktCalk; i++)
+		N[i] = new double[4];
+
+	for (int j = 0; j < nPktCalk; j++)
+	{
+		std::cout << pkt[j][0] << " " << pkt[j][1] << std::endl;
+		N[j][0] = 0.25 * (1 - pkt[j][0]) * (1 - pkt[j][1]);
+		N[j][1] = 0.25 * (1 + pkt[j][0]) * (1 - pkt[j][1]);
+		N[j][2] = 0.25 * (1 + pkt[j][0]) * (1 + pkt[j][1]);
+		N[j][3] = 0.25 * (1 - pkt[j][0]) * (1 + pkt[j][1]);
+
+		std::cout << N[j][0] << " " << N[j][1] << " " << N[j][2] << " " << N[j][3] << " " << std::endl;
+	}
+
 	delete[] G_X;
 }
 

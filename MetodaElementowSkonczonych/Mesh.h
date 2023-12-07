@@ -27,8 +27,9 @@ struct Mesh
 	void calcHForElements(const ElementUniwersalny& elUni);
 	void calcHBCForElements(const ElementUniwersalny& elUni);
 	void calcVectorPForElements(const ElementUniwersalny& elUni);
+	void calcCForElements(const ElementUniwersalny& elUni);
 
-	static double* calcTemperatureForElements(Mesh& mesh, const ElementUniwersalny& elUni);
+	static double* calcTemperature(Mesh& mesh, const ElementUniwersalny& elUni);
 
 	~Mesh();
 

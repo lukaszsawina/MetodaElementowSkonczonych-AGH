@@ -36,10 +36,12 @@ int main()
 	//siatka.calcHBCForElements(elementUniwersalny);
 
 	//siatka.calcVectorPForElements(elementUniwersalny);
-	
-	double* temperatury  = Mesh::calcTemperatureForElements(siatka, elementUniwersalny);
 
-	for (int i = 0; i < siatka.globalData->ElementsNumber; i++)
+	//siatka.calcCForElements(elementUniwersalny);
+
+	double* temperatury  = Mesh::calcTemperature(siatka, elementUniwersalny);
+
+	for (int i = 0; i < siatka.globalData->NodesNumber; i++)
 	{
 		std::cout << temperatury[i] << std::endl;
 	}
