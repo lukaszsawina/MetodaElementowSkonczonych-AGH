@@ -370,8 +370,8 @@ double* Mesh::calcTemperature(Mesh& mesh, const ElementUniwersalny& elUni)
 			{
 				agregatH[mesh.elements[e].ID_wezlow[i] - 1][mesh.elements[e].ID_wezlow[j] - 1] += mesh.elements[e].H[i][j];
 				agregatH[mesh.elements[e].ID_wezlow[i] - 1][mesh.elements[e].ID_wezlow[j] - 1] += mesh.elements[e].HBC[i][j];
-				agregatH[mesh.elements[e].ID_wezlow[i] - 1][mesh.elements[e].ID_wezlow[j] - 1] += mesh.elements[e].C[i][j] / 50;
-				agregatC[mesh.elements[e].ID_wezlow[i] - 1][mesh.elements[e].ID_wezlow[j] - 1] += mesh.elements[e].C[i][j] / 50;
+				agregatH[mesh.elements[e].ID_wezlow[i] - 1][mesh.elements[e].ID_wezlow[j] - 1] += mesh.elements[e].C[i][j] / mesh.globalData->SimulationStepTime;
+				agregatC[mesh.elements[e].ID_wezlow[i] - 1][mesh.elements[e].ID_wezlow[j] - 1] += mesh.elements[e].C[i][j] / mesh.globalData->SimulationStepTime;
 			}
 		}
 	}
@@ -397,7 +397,7 @@ double* Mesh::calcTemperature(Mesh& mesh, const ElementUniwersalny& elUni)
 		double temp = 0;
 		for (int j = 0; j < nNodes; j++)
 		{
-			temp += agregatC[i][j] * 100;
+			temp += agregatC[i][j] * mesh.globalData->InitialTemp;
 			std::cout << agregatC[i][j] << " ";
 		}
 		agregatBC[i] = temp;
