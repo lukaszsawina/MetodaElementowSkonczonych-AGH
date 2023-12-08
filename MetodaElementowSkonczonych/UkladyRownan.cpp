@@ -4,13 +4,12 @@
 
 double* ElimGauss(double** A, double* b, int n)
 {
-    double** AB = new  double* [n];
+    double** AB = new double* [n];
 
     for (int i = 0; i < n; i++)
     {
         AB[i] = new double[n + 1];
     }
-
 
     for (int i = 0; i < n; i++)
     {
@@ -26,20 +25,26 @@ double* ElimGauss(double** A, double* b, int n)
         int rmax = k;
         double vmax = std::abs(AB[k][k]);
 
-        for (int i = k + 1; i < n; i++) {
-
-            double val = std::abs(AB[i][k]);
-
-            if (val > vmax) {
-                rmax = i;
-                vmax = val;
+        // Sprawdü, czy element diagonalny nie jest bliski zeru
+        if (std::abs(vmax) < 1e-10) {
+            // WymieÒ wiersze, jeúli element diagonalny jest bliski zeru
+            for (int i = k + 1; i < n; i++) {
+                if (std::abs(AB[i][k]) > vmax) {
+                    rmax = i;
+                    vmax = std::abs(AB[i][k]);
+                }
             }
-        }
 
-        for (int j = k; j < n + 1; j++) {
-            double tmp = AB[k][j];
-            AB[k][j] = AB[rmax][j];
-            AB[rmax][j] = tmp;
+            if (std::abs(AB[rmax][k]) < 1e-10) {
+                // Element diagonalny jest nadal bliski zeru, program nie moøe kontynuowaÊ
+                std::cerr << "Eliminacja Gaussa: Macierz osobliwa." << std::endl;
+                return nullptr;
+            }
+
+            // WymieÒ wiersze
+            for (int j = k; j < n + 1; j++) {
+                std::swap(AB[k][j], AB[rmax][j]);
+            }
         }
 
         for (int i = k + 1; i < n; i++) {
@@ -57,10 +62,21 @@ double* ElimGauss(double** A, double* b, int n)
         for (int j = i + 1; j < n; j++) {
             sum += AB[i][j] * x[j];
         }
+
+        // Sprawdü, czy element diagonalny nie jest bliski zeru
+        if (std::abs(AB[i][i]) < 1e-10) {
+            // Element diagonalny jest bliski zeru, program nie moøe kontynuowaÊ
+            std::cerr << "Eliminacja Gaussa: Macierz osobliwa." << std::endl;
+            delete[] x;
+            for (int i = 0; i < n; i++) {
+                delete[] AB[i];
+            }
+            delete[] AB;
+            return nullptr;
+        }
+
         x[i] = (AB[i][n] - sum) / AB[i][i];
     }
-
-
 
     for (int i = 0; i < n; i++) {
         delete[] AB[i];

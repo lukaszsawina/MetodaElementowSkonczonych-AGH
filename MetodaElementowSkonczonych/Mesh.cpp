@@ -323,7 +323,29 @@ Mesh::~Mesh()
 	delete globalData;
 }
 
-double* Mesh::calcTemperature(Mesh& mesh, const ElementUniwersalny& elUni)
+// Funkcja znajduj¹ca wartoœæ minimaln¹ i maksymaln¹ w tablicy
+std::pair<double, double> znajdz_min_i_max(const double* tablica, int rozmiar) {
+	if (rozmiar == 0 || tablica == nullptr) {
+		// Zwracamy wartoœci domyœlne dla pustej tablicy lub nullptr
+		return std::make_pair(std::numeric_limits<double>::infinity(), -std::numeric_limits<double>::infinity());
+	}
+
+	double min_wartosc = std::numeric_limits<double>::infinity();
+	double max_wartosc = -std::numeric_limits<double>::infinity();
+
+	for (int i = 0; i < rozmiar; ++i) {
+		if (tablica[i] < min_wartosc) {
+			min_wartosc = tablica[i];
+		}
+		if (tablica[i] > max_wartosc) {
+			max_wartosc = tablica[i];
+		}
+	}
+
+	return std::make_pair(min_wartosc, max_wartosc);
+}
+
+double* calcTemperatureForStep(Mesh& mesh, double* tempV)
 {
 	int nNodes = mesh.globalData->NodesNumber;
 
@@ -354,11 +376,6 @@ double* Mesh::calcTemperature(Mesh& mesh, const ElementUniwersalny& elUni)
 		agregatP[i] = 0;
 	}
 
-	mesh.calcHForElements(elUni);
-	mesh.calcHBCForElements(elUni);
-	mesh.calcVectorPForElements(elUni);
-	mesh.calcCForElements(elUni);
-
 	//Liczenie agregatu H
 	int nElements = mesh.globalData->ElementsNumber;
 
@@ -376,14 +393,14 @@ double* Mesh::calcTemperature(Mesh& mesh, const ElementUniwersalny& elUni)
 		}
 	}
 
-	std::cout << std::endl << "Agregat H" << std::endl;
+	//std::cout << std::endl << "Agregat H" << std::endl;
 
-	for (int i = 0; i < nNodes; i++)
-	{
-		for (int j = 0; j < nNodes; j++)
-			std::cout << agregatH[i][j] << "\t";
-		std::cout << std::endl;
-	}
+	//for (int i = 0; i < nNodes; i++)
+	//{
+	//	for (int j = 0; j < nNodes; j++)
+	//		std::cout << agregatC[i][j] << "\t";
+	//	std::cout << std::endl;
+	//}
 
 	double* agregatBC = new double[nNodes];
 
@@ -397,8 +414,7 @@ double* Mesh::calcTemperature(Mesh& mesh, const ElementUniwersalny& elUni)
 		double temp = 0;
 		for (int j = 0; j < nNodes; j++)
 		{
-			temp += agregatC[i][j] * mesh.globalData->InitialTemp;
-			std::cout << agregatC[i][j] << " ";
+			temp += agregatC[i][j] * tempV[j];
 		}
 		agregatBC[i] = temp;
 	}
@@ -414,17 +430,53 @@ double* Mesh::calcTemperature(Mesh& mesh, const ElementUniwersalny& elUni)
 
 	for (int i = 0; i < nNodes; i++)
 	{
-		agregatBC[i] += agregatP[i];
+		agregatBC[i] = (agregatBC[i] + agregatP[i]);
 	}
 
-	std::cout << std::endl << "Agregat BC" << std::endl;
+	//std::cout << std::endl << "Agregat BC" << std::endl;
 
-	for (int i = 0; i < nNodes; i++)
-	{
-		std::cout << agregatBC[i] << std::endl;
-	}
+	//for (int i = 0; i < nNodes; i++)
+	//{
+	//	std::cout << agregatBC[i] << std::endl;
+	//}
 
-	std::cout << std::endl << "Temperatury" << std::endl;
+	double* output = ElimGauss(agregatH, agregatBC, nNodes);
 
-	return ElimGauss(agregatH, agregatBC, nNodes);
+	return output;
 }
+
+double* Mesh::calcTemperature(Mesh& mesh, const ElementUniwersalny& elUni)
+{
+	mesh.calcHForElements(elUni);
+	mesh.calcHBCForElements(elUni);
+	mesh.calcVectorPForElements(elUni);
+	mesh.calcCForElements(elUni);
+
+	double* tempV = new double[mesh.globalData->NodesNumber];
+
+	for (int i = 0; i < mesh.globalData->NodesNumber; i++)
+	{
+		tempV[i] = mesh.globalData->InitialTemp;
+	}
+
+	int nstep = mesh.globalData->SimulationTime / mesh.globalData->SimulationStepTime;
+
+	for (int i = 0; i < nstep; i++)
+	{
+		tempV = calcTemperatureForStep(mesh, tempV);
+
+		std::cout << std::endl;
+		std::cout << "Time: " << mesh.globalData->SimulationStepTime * (i + 1) << std::endl;
+
+		std::pair<double, double> wyniki = znajdz_min_i_max(tempV, mesh.globalData->NodesNumber);
+		std::cout << "Min: " << wyniki.first << "\t" << wyniki.second;
+		/*for (int j = 0; j < mesh.globalData->NodesNumber; j++)
+		{
+			std::cout << tempV[j] << " ";
+		}*/
+		std::cout << std::endl;
+	}
+
+	return tempV;
+}
+

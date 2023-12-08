@@ -5,6 +5,7 @@
 #include <vector>
 #include <iomanip>
 #include <sstream>
+#include <climits>
 
 #include "calkowanie.h"
 #include "UkladyRownan.h"
