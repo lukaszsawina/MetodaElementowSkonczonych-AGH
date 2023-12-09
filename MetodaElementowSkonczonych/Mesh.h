@@ -7,12 +7,14 @@
 #include <sstream>
 #include <climits>
 
+#include "RunType.h"
 #include "calkowanie.h"
 #include "UkladyRownan.h"
 #include "GlobalData.h"
 #include "Element.h"
 #include "ElementUniwersalny.h"
 #include "Node.h"
+
 
 struct Mesh
 {

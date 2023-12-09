@@ -138,6 +138,8 @@
   <ItemGroup>
     <Text Include="Test1_4_4.txt" />
     <Text Include="Test2_4_4_MixGrid.txt" />
+    <Text Include="Test3_31_31_kwadrat.txt" />
+    <Text Include="Test4_31_31_trapez.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="calkowanie.h" />
@@ -147,6 +149,7 @@
     <ClInclude Include="interpolacja.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Node.h" />
+    <ClInclude Include="RunType.h" />
     <ClInclude Include="UkladyRownan.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

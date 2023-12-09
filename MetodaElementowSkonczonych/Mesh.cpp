@@ -37,7 +37,9 @@ void Mesh::calcHForElements(const ElementUniwersalny& elUni)
 {
 	for (int i = 0; i < globalData->ElementsNumber; i++)
 	{
+#ifdef DEBUG_ELEMENT_H
 		std::cout << std::endl << "Element: " << i+1 << std::endl;
+#endif
 		double* x = new double[4];
 		double* y = new double[4];
 
@@ -46,8 +48,9 @@ void Mesh::calcHForElements(const ElementUniwersalny& elUni)
 			int n = elements[i].ID_wezlow[j];
 			x[j] = nodes[n-1].x;
 			y[j] = nodes[n-1].y;
-
+#ifdef DEBUG_ELEMENT_H
 			std::cout << "PC " << i+1 << "(x: " << x[j] << " ; " << y[j] << ")" << std::endl;
+#endif
 		}
 
 		elements[i].calcH(x, y, elUni);
@@ -61,7 +64,10 @@ void Mesh::calcHBCForElements(const ElementUniwersalny& elUni)
 {
 	for (int i = 0; i < globalData->ElementsNumber; i++)
 	{
+#ifdef DEBUG_ELEMENT_HBC
 		std::cout << std::endl <<  "Element: " << i + 1 << std::endl;
+#endif
+
 		double* x = new double[4];
 		double* y = new double[4];
 		int* bc = new int[4];
@@ -86,7 +92,9 @@ void Mesh::calcVectorPForElements(const ElementUniwersalny& elUni)
 {
 	for (int i = 0; i < globalData->ElementsNumber; i++)
 	{
+#ifdef DEBUG_ELEMENT_VP
 		std::cout << std::endl << "Element: " << i + 1 << std::endl;
+#endif
 		double* x = new double[4];
 		double* y = new double[4];
 		int* bc = new int[4];
@@ -111,7 +119,9 @@ void Mesh::calcCForElements(const ElementUniwersalny& elUni)
 {
 	for (int i = 0; i < globalData->ElementsNumber; i++)
 	{
+#ifdef DEBUG_ELEMENT_C
 		std::cout << std::endl << "Element: " << i + 1 << std::endl;
+#endif
 		double* x = new double[4];
 		double* y = new double[4];
 
@@ -290,6 +300,9 @@ Element* Mesh::readMeshElements(std::string fileSrc)
 
 void Mesh::readMeshFile(std::string fileSrc)
 {
+#ifdef DEBUG
+	std::cout << "To jest tryb Debug." << std::endl;
+#endif
 	globalData = readMeshGlobalData(fileSrc);
 	nodes = readMeshNodes(fileSrc);
 	elements = readMeshElements(fileSrc);
@@ -345,8 +358,71 @@ std::pair<double, double> znajdz_min_i_max(const double* tablica, int rozmiar) {
 	return std::make_pair(min_wartosc, max_wartosc);
 }
 
-double* calcTemperatureForStep(Mesh& mesh, double* tempV)
+double* calcTemperatureForStep(Mesh& mesh, double** agregatH, double** agregatC, double* tempV)
 {
+	int nNodes = mesh.globalData->NodesNumber;
+
+	double* agregatP = new double[nNodes];
+
+	for (int i = 0; i < nNodes; i++)
+	{
+		agregatP[i] = 0;
+	}
+
+	double* agregatBC = new double[nNodes];
+
+	for (int i = 0; i < nNodes; i++)
+	{
+		agregatBC[i] = 0;
+	}
+
+	for (int i = 0; i < nNodes; i++)
+	{
+		double temp = 0;
+		for (int j = 0; j < nNodes; j++)
+		{
+			temp += agregatC[i][j] * tempV[j];
+		}
+		agregatBC[i] = temp;
+	}
+
+	int nElements = mesh.globalData->ElementsNumber;
+
+	//Liczenie agregatu P
+	for (int e = 0; e < nElements; e++)
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			agregatP[mesh.elements[e].ID_wezlow[i] - 1] += mesh.elements[e].VectorP[i];
+		}
+	}
+
+	for (int i = 0; i < nNodes; i++)
+	{
+		agregatBC[i] = (agregatBC[i] + agregatP[i]);
+	}
+
+#ifdef DEBUG_CALC_TEMP
+	std::cout << std::endl << "Agregat BC" << std::endl;
+
+	for (int i = 0; i < nNodes; i++)
+	{
+		std::cout << agregatBC[i] << std::endl;
+	}
+#endif
+
+	double* output = ElimGauss(agregatH, agregatBC, nNodes);
+
+	return output;
+}
+
+double* Mesh::calcTemperature(Mesh& mesh, const ElementUniwersalny& elUni)
+{
+	mesh.calcHForElements(elUni);
+	mesh.calcHBCForElements(elUni);
+	mesh.calcVectorPForElements(elUni);
+	mesh.calcCForElements(elUni);
+
 	int nNodes = mesh.globalData->NodesNumber;
 
 	double** agregatH = new double* [nNodes];
@@ -369,13 +445,6 @@ double* calcTemperatureForStep(Mesh& mesh, double* tempV)
 			agregatC[i][j] = 0;
 	}
 
-	double* agregatP = new double[nNodes];
-
-	for (int i = 0; i < nNodes; i++)
-	{
-		agregatP[i] = 0;
-	}
-
 	//Liczenie agregatu H
 	int nElements = mesh.globalData->ElementsNumber;
 
@@ -393,64 +462,16 @@ double* calcTemperatureForStep(Mesh& mesh, double* tempV)
 		}
 	}
 
-	//std::cout << std::endl << "Agregat H" << std::endl;
-
-	//for (int i = 0; i < nNodes; i++)
-	//{
-	//	for (int j = 0; j < nNodes; j++)
-	//		std::cout << agregatC[i][j] << "\t";
-	//	std::cout << std::endl;
-	//}
-
-	double* agregatBC = new double[nNodes];
+#ifdef DEBUG_CALC_TEMP
+	std::cout << std::endl << "Agregat H" << std::endl;
 
 	for (int i = 0; i < nNodes; i++)
 	{
-		agregatBC[i] = 0;
-	}
-
-	for (int i = 0; i < nNodes; i++)
-	{
-		double temp = 0;
 		for (int j = 0; j < nNodes; j++)
-		{
-			temp += agregatC[i][j] * tempV[j];
-		}
-		agregatBC[i] = temp;
+			std::cout << agregatC[i][j] << "\t";
+		std::cout << std::endl;
 	}
-
-	//Liczenie agregatu P
-	for (int e = 0; e < nElements; e++)
-	{
-		for (int i = 0; i < 4; i++)
-		{
-			agregatP[mesh.elements[e].ID_wezlow[i] - 1] += mesh.elements[e].VectorP[i];
-		}
-	}
-
-	for (int i = 0; i < nNodes; i++)
-	{
-		agregatBC[i] = (agregatBC[i] + agregatP[i]);
-	}
-
-	//std::cout << std::endl << "Agregat BC" << std::endl;
-
-	//for (int i = 0; i < nNodes; i++)
-	//{
-	//	std::cout << agregatBC[i] << std::endl;
-	//}
-
-	double* output = ElimGauss(agregatH, agregatBC, nNodes);
-
-	return output;
-}
-
-double* Mesh::calcTemperature(Mesh& mesh, const ElementUniwersalny& elUni)
-{
-	mesh.calcHForElements(elUni);
-	mesh.calcHBCForElements(elUni);
-	mesh.calcVectorPForElements(elUni);
-	mesh.calcCForElements(elUni);
+#endif
 
 	double* tempV = new double[mesh.globalData->NodesNumber];
 
@@ -463,17 +484,21 @@ double* Mesh::calcTemperature(Mesh& mesh, const ElementUniwersalny& elUni)
 
 	for (int i = 0; i < nstep; i++)
 	{
-		tempV = calcTemperatureForStep(mesh, tempV);
+		tempV = calcTemperatureForStep(mesh, agregatH, agregatC, tempV);
 
 		std::cout << std::endl;
 		std::cout << "Time: " << mesh.globalData->SimulationStepTime * (i + 1) << std::endl;
 
 		std::pair<double, double> wyniki = znajdz_min_i_max(tempV, mesh.globalData->NodesNumber);
 		std::cout << "Min: " << wyniki.first << "\t" << wyniki.second;
-		/*for (int j = 0; j < mesh.globalData->NodesNumber; j++)
+
+#ifdef DEBUG_CALC_TEMP
+		std::cout << "Temperatures: " << std::endl;
+		for (int j = 0; j < mesh.globalData->NodesNumber; j++)
 		{
 			std::cout << tempV[j] << " ";
-		}*/
+		}
+#endif
 		std::cout << std::endl;
 	}
 

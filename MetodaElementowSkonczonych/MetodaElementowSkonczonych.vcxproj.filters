@@ -44,6 +44,12 @@
     <Text Include="Test2_4_4_MixGrid.txt">
       <Filter>Source Files</Filter>
     </Text>
+    <Text Include="Test3_31_31_kwadrat.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="Test4_31_31_trapez.txt">
+      <Filter>Source Files</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="calkowanie.h">
@@ -68,6 +74,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UkladyRownan.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RunType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

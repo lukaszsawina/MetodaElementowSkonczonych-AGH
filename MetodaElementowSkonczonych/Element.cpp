@@ -2,6 +2,7 @@
 
 #include "Element.h"
 #include "calkowanie.h"
+#include "RunType.h"
 
 void Element::calcH(double* x, double* y, const ElementUniwersalny& elUni)
 {
@@ -29,7 +30,8 @@ void Element::calcH(double* x, double* y, const ElementUniwersalny& elUni)
 		detJPunktow.push_back(detJ);
 	}
 
-	std::cout << "Macierze jakobiego punktów" << std::endl;
+#ifdef DEBUG_ELEMENT_H
+	std::cout << "---Macierze jakobiego punktow---" << std::endl;
 	for (int i = 0; i < macierzeJakobiegoPunktow.size(); i++)
 	{
 		std::cout << "PC" << i + 1 << std::endl;
@@ -42,6 +44,8 @@ void Element::calcH(double* x, double* y, const ElementUniwersalny& elUni)
 		}
 		std::cout << std::endl;
 	}
+#endif
+
 
 	//Przemno¿enie przez 1/detJ
 	for (int i = 0; i < macierzeJakobiegoPunktow.size(); i++)
@@ -51,7 +55,8 @@ void Element::calcH(double* x, double* y, const ElementUniwersalny& elUni)
 				macierzeJakobiegoPunktow[i][j][k] *= (1 / detJPunktow[i]);
 	}
 
-	std::cout << "Macierze jakobiego punktów przemno¿ona przez 1/detJ" << std::endl;
+#ifdef DEBUG_ELEMENT_H
+	std::cout << std::endl << "---Macierze jakobiego punktów przemno¿ona przez 1/detJ---" << std::endl;
 	for (int i = 0; i < macierzeJakobiegoPunktow.size(); i++)
 	{
 		std::cout << "PC" << i + 1 << std::endl;
@@ -64,21 +69,22 @@ void Element::calcH(double* x, double* y, const ElementUniwersalny& elUni)
 		}
 		std::cout << std::endl;
 	}
+#endif
 
 	double** matdx;
 	double** matdy;
 
-	matdx = new double* [4];
-	matdy = new double* [4];
+	matdx = new double* [pow(elUni.nPkt, 2)];
+	matdy = new double* [pow(elUni.nPkt, 2)];
 
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < pow(elUni.nPkt, 2); i++)
 	{
 		matdx[i] = new double[4];
 		matdy[i] = new double[4];
 	}
 
 	//Liczenie wartoœci macierzy dx i dy
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < pow(elUni.nPkt, 2); i++)
 	{
 		matdx[i][0] = macierzeJakobiegoPunktow[i][0][0] * elUni.matdKsi[i][0] + macierzeJakobiegoPunktow[i][0][1] * elUni.matdEta[i][0];
 		matdx[i][1] = macierzeJakobiegoPunktow[i][0][0] * elUni.matdKsi[i][1] + macierzeJakobiegoPunktow[i][0][1] * elUni.matdEta[i][1];
@@ -98,22 +104,6 @@ void Element::calcH(double* x, double* y, const ElementUniwersalny& elUni)
 			delete[] macierzeJakobiegoPunktow[i][j];
 
 		delete[] macierzeJakobiegoPunktow[i];
-	}
-
-	std::cout << "matdx" << std::endl;
-	for (int i = 0; i < 4; i++)
-	{
-		for (int j = 0; j < 4; j++)
-			std::cout << matdx[i][j] << " ";
-		std::cout << std::endl;
-	}
-
-	std::cout << "matdy" << std::endl;
-	for (int i = 0; i < 4; i++)
-	{
-		for (int j = 0; j < 4; j++)
-			std::cout << matdy[i][j] << " ";
-		std::cout << std::endl;
 	}
 
 	std::vector<double**> macierzeHPunktow;
@@ -149,10 +139,9 @@ void Element::calcH(double* x, double* y, const ElementUniwersalny& elUni)
 	delete[] matdx;
 	delete[] matdy;
 
-
+#ifdef DEBUG_ELEMENT_H
 	std::cout << std::endl;
-
-	std::cout << "Macierze H punktów" << std::endl;
+	std::cout << "---Macierze H punktow---" << std::endl;
 
 	for (int i = 0; i < macierzeHPunktow.size(); i++)
 	{
@@ -166,7 +155,7 @@ void Element::calcH(double* x, double* y, const ElementUniwersalny& elUni)
 		}
 		std::cout << std::endl;
 	}
-
+#endif
 
 	double** outputH = new double* [4];
 	for (int i = 0; i < 4; i++)
@@ -203,7 +192,7 @@ void Element::calcH(double* x, double* y, const ElementUniwersalny& elUni)
 
 		delete[] macierzeHPunktow[i];
 	}
-
+#ifdef DEBUG_ELEMENT_H
 	std::cout << "Macierz H" << std::endl;
 	for (int i = 0; i < 4; i++)
 	{
@@ -211,6 +200,7 @@ void Element::calcH(double* x, double* y, const ElementUniwersalny& elUni)
 			std::cout << outputH[i][j] << "\t";
 		std::cout << std::endl;
 	}
+#endif
 
 	H = outputH;
 }
@@ -304,7 +294,7 @@ void Element::calcHBC(double* x, double* y, int* BC, const ElementUniwersalny& e
 
 		HBCEdges.push_back(HBCEdge);
 
-
+#ifdef DEBUG_ELEMENT_HBC
 		std::cout << "Macierz HBC dla sciany " << p << std::endl;
 
 		for (int i = 0; i < 4; i++)
@@ -315,7 +305,7 @@ void Element::calcHBC(double* x, double* y, int* BC, const ElementUniwersalny& e
 		}
 
 		std::cout << std::endl;
-
+#endif
 	}
 
 	double** HBCForThisElement = new double* [4];
@@ -353,7 +343,7 @@ void Element::calcHBC(double* x, double* y, int* BC, const ElementUniwersalny& e
 		delete[] HBCEdges[i];
 	}
 
-
+#ifdef DEBUG_ELEMENT_HBC
 	std::cout << "Macierz HBC elementu" << std::endl;
 
 	for (int n = 0; n < 4; n++)
@@ -364,6 +354,7 @@ void Element::calcHBC(double* x, double* y, int* BC, const ElementUniwersalny& e
 		}
 		std::cout << std::endl;
 	}
+#endif
 
 	delete[] G_X;
 	delete[] G_W;
@@ -426,12 +417,14 @@ void Element::calcVectorP(double* x, double* y, int* BC, const ElementUniwersaln
 		vectorPForEdges.push_back(vectorPForEdge);
 	}
 
+#ifdef DEBUG_ELEMENT_VP
 	for (int i = 0; i < 4; i++)
 	{
 		for (int j = 0; j < 4; j++)
 			std::cout << vectorPForEdges[i][j] << "\t";
 		std::cout << std::endl;
 	}
+#endif
 
 	double* wynik = new double[4];
 
@@ -450,10 +443,13 @@ void Element::calcVectorP(double* x, double* y, int* BC, const ElementUniwersaln
 		delete[] vectorPForEdges[i];
 	}
 
+#ifdef DEBUG_ELEMENT_VP
 	for (int i = 0; i < 4; i++)
 	{
 		std::cout << wynik[i] << "\t";
 	}
+	std::cout << std::endl;
+#endif
 
 	VectorP = wynik;
 }
@@ -539,6 +535,7 @@ void Element::calcC(double* x, double* y, const ElementUniwersalny& elUni)
 		}
 	}
 
+#ifdef DEBUG_ELEMENT_C
 	std::cout << "Macierz C" << std::endl;
 	for (int i = 0; i < 4; i++)
 	{
@@ -546,6 +543,7 @@ void Element::calcC(double* x, double* y, const ElementUniwersalny& elUni)
 			std::cout << outputC[i][j] << "\t";
 		std::cout << std::endl;
 	}
+#endif
 
 	C = outputC;
 }

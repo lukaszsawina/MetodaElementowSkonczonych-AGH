@@ -4,7 +4,7 @@
 #include "calkowanie.h"
 #include "Mesh.h"
 #include "ElementUniwersalny.h"
-
+#include "RunType.h"
 
 
 //Zadanie domowe
@@ -22,6 +22,10 @@ double funkcja_testowa_2(double x, double y) {
 
 int main()
 {
+#ifdef DEBUG
+	std::cout << "Tryb Debug." << std::endl;
+#endif
+
 	Mesh siatka;
 	siatka.readMeshFile("Test2_4_4_MixGrid.txt");
 	//siatka.showGlobalData();
@@ -29,7 +33,7 @@ int main()
 	//siatka.showElements();
 
 	ElementUniwersalny elementUniwersalny;
-	elementUniwersalny.init(2);
+	elementUniwersalny.init(3);
 
 	//siatka.calcHForElements(elementUniwersalny);
 
