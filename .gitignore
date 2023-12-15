@@ -438,3 +438,4 @@ FodyWeavers.xsd
 *.ilk
 *.tlog
 *.exe
+/MetodaElementowSkonczonych/output/*.vtk
