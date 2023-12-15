@@ -289,6 +289,7 @@ Element* Mesh::readMeshElements(std::string fileSrc)
 			}
 
 			output[i].ID = stoi(elements[0]);
+			output[i].globalData = this->globalData;
 
 			for (int j = 0; j < 4; j++)
 				output[i].ID_wezlow[j] = stod(elements[j+1]);
@@ -336,10 +337,8 @@ Mesh::~Mesh()
 	delete globalData;
 }
 
-// Funkcja znajduj¹ca wartoœæ minimaln¹ i maksymaln¹ w tablicy
 std::pair<double, double> znajdz_min_i_max(const double* tablica, int rozmiar) {
 	if (rozmiar == 0 || tablica == nullptr) {
-		// Zwracamy wartoœci domyœlne dla pustej tablicy lub nullptr
 		return std::make_pair(std::numeric_limits<double>::infinity(), -std::numeric_limits<double>::infinity());
 	}
 
@@ -414,6 +413,99 @@ double* calcTemperatureForStep(Mesh& mesh, double** agregatH, double** agregatC,
 	double* output = ElimGauss(agregatH, agregatBC, nNodes);
 
 	return output;
+}
+
+void GenerateOutputFile(Mesh& mesh, double* tempV, int n)
+{
+	std::stringstream ss;
+	ss << n;
+	std::string filename = "output/Foo" + ss.str() + ".vtk";
+
+	std::ofstream plik(filename);
+
+	if (!plik.is_open()) {
+		std::cout << "ERROR, file not created" << std::endl;
+		return;
+	}
+
+	plik << "# vtk DataFile Version 2.0." << std::endl;
+	plik << "Unstructured Grid Example" << std::endl;
+	plik << "ASCII" << std::endl;
+	plik << "DATASET UNSTRUCTURED_GRID" << std::endl;
+	plik << std::endl;
+
+	ss.str("");
+
+	ss << mesh.globalData->NodesNumber;
+
+	plik << "POINTS " + ss.str() + " float" << std::endl;
+	for (int i = 0; i < mesh.globalData->NodesNumber; i++)
+	{
+		ss.str("");
+		ss << mesh.nodes[i].x;
+
+		plik << ss.str() << " ";
+
+		ss.str("");
+		ss << mesh.nodes[i].y;
+
+		plik << ss.str() << " " << "0" << std::endl;
+	}
+
+	ss.str("");
+
+	ss << mesh.globalData->ElementsNumber;
+
+	plik << std::endl;
+	plik << "CELLS " + ss.str() + " ";
+
+	ss.str("");
+
+	ss << mesh.globalData->ElementsNumber*5;
+
+	plik << ss.str() << std::endl;
+	for (int i = 0; i < mesh.globalData->ElementsNumber; i++)
+	{
+		plik << "4 ";
+
+		for (int j = 0; j < 4; j++)
+		{
+			ss.str("");
+			ss << mesh.elements[i].ID_wezlow[j]-1;
+			plik << ss.str() << " ";
+		}
+		plik << std::endl;
+	}
+
+	ss.str("");
+
+	ss << mesh.globalData->ElementsNumber;
+
+	plik << std::endl;
+	plik << "CELL_TYPES " + ss.str() << std::endl;
+	for (int i = 0; i < mesh.globalData->ElementsNumber; i++)
+		plik << "9" << std::endl;
+
+	ss.str("");
+
+	ss << mesh.globalData->NodesNumber;
+
+	plik << std::endl;
+	plik << "POINT_DATA " + ss.str() << std::endl;
+	plik << "SCALARS Temp float 1" << std::endl;
+	plik << "LOOKUP_TABLE default" << std::endl;
+
+	for (int i = 0; i < mesh.globalData->NodesNumber; i++)
+	{
+		ss.str("");
+
+		ss << tempV[i];
+
+		plik << ss.str() << std::endl;
+	}
+
+
+	plik.close();
 }
 
 double* Mesh::calcTemperature(Mesh& mesh, const ElementUniwersalny& elUni)
@@ -492,14 +584,15 @@ double* Mesh::calcTemperature(Mesh& mesh, const ElementUniwersalny& elUni)
 		std::pair<double, double> wyniki = znajdz_min_i_max(tempV, mesh.globalData->NodesNumber);
 		std::cout << "Min: " << wyniki.first << "\t" << wyniki.second;
 
+		GenerateOutputFile(mesh, tempV, i+1);
 #ifdef DEBUG_CALC_TEMP
 		std::cout << "Temperatures: " << std::endl;
 		for (int j = 0; j < mesh.globalData->NodesNumber; j++)
 		{
 			std::cout << tempV[j] << " ";
 		}
-#endif
 		std::cout << std::endl;
+#endif
 	}
 
 	return tempV;

@@ -1,10 +1,4 @@
 ﻿  Element.cpp
 D:\DEV\MetodaElementowSkonczonych\MetodaElementowSkonczonych\Element.cpp(77,26): warning C4244: 'initializing': conversion from 'double' to 'size_t', possible loss of data
 D:\DEV\MetodaElementowSkonczonych\MetodaElementowSkonczonych\Element.cpp(78,26): warning C4244: 'initializing': conversion from 'double' to 'size_t', possible loss of data
-  ElementUniwersalny.cpp
-D:\DEV\MetodaElementowSkonczonych\MetodaElementowSkonczonych\ElementUniwersalny.cpp(10,15): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-  Mesh.cpp
-D:\DEV\MetodaElementowSkonczonych\MetodaElementowSkonczonych\Mesh.cpp(294,34): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-  main.cpp
-  Generating Code...
   MetodaElementowSkonczonych.vcxproj -> D:\DEV\MetodaElementowSkonczonych\x64\Debug\MetodaElementowSkonczonych.exe

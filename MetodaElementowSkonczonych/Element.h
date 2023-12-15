@@ -1,5 +1,6 @@
 #pragma once
 #include "ElementUniwersalny.h"
+#include "GlobalData.h"
 
 struct Element {
 	int ID;
@@ -8,6 +9,7 @@ struct Element {
 	double** HBC = nullptr;
 	double* VectorP = nullptr;
 	double** C = nullptr;
+	GlobalData* globalData;
 
 	void calcH(double* x, double* y, const ElementUniwersalny& elUni);
 	void calcHBC(double* x, double* y, int* BC, const ElementUniwersalny& elUni);

@@ -119,10 +119,10 @@ void Element::calcH(double* x, double* y, const ElementUniwersalny& elUni)
 		for (int i = 0; i < 4; i++)
 		{
 			//Wartoœæ 30 nie jest sta³a!!! pewnie bêdzie zmieniana w dalszych programach
-			Hpkt[i][0] = (matdx[p][i] * matdx[p][0] + matdy[p][i] * matdy[p][0]) * detJPunktow[p] * 25;
-			Hpkt[i][1] = (matdx[p][i] * matdx[p][1] + matdy[p][i] * matdy[p][1]) * detJPunktow[p] * 25;
-			Hpkt[i][2] = (matdx[p][i] * matdx[p][2] + matdy[p][i] * matdy[p][2]) * detJPunktow[p] * 25;
-			Hpkt[i][3] = (matdx[p][i] * matdx[p][3] + matdy[p][i] * matdy[p][3]) * detJPunktow[p] * 25;
+			Hpkt[i][0] = (matdx[p][i] * matdx[p][0] + matdy[p][i] * matdy[p][0]) * detJPunktow[p] * globalData->Conductivity;
+			Hpkt[i][1] = (matdx[p][i] * matdx[p][1] + matdy[p][i] * matdy[p][1]) * detJPunktow[p] * globalData->Conductivity;
+			Hpkt[i][2] = (matdx[p][i] * matdx[p][2] + matdy[p][i] * matdy[p][2]) * detJPunktow[p] * globalData->Conductivity;
+			Hpkt[i][3] = (matdx[p][i] * matdx[p][3] + matdy[p][i] * matdy[p][3]) * detJPunktow[p] * globalData->Conductivity;
 		}
 
 		macierzeHPunktow.push_back(Hpkt);
@@ -284,7 +284,7 @@ void Element::calcHBC(double* x, double* y, int* BC, const ElementUniwersalny& e
 			{
 				for (int k = 0; k < 4; k++)
 				{
-					HBCEdge[i][k] += elUni.matNPktForEdges[p][j][i] * elUni.matNPktForEdges[p][j][k] * G_W[j] * 300.;
+					HBCEdge[i][k] += elUni.matNPktForEdges[p][j][i] * elUni.matNPktForEdges[p][j][k] * G_W[j] * globalData->Alfa;
 				}
 			}
 
@@ -407,12 +407,12 @@ void Element::calcVectorP(double* x, double* y, int* BC, const ElementUniwersaln
 		{
 			for (int j = 0; j < elUni.nPkt; j++)
 			{
-				vectorPForEdge[i] += elUni.matNPktForEdges[e][j][i] * 1200 * G_W[j];
+				vectorPForEdge[i] += elUni.matNPktForEdges[e][j][i] * globalData->Tot * G_W[j];
 			}
 		}
 
 		for (int j = 0; j < 4; j++)
-			vectorPForEdge[j] = vectorPForEdge[j] * detJ[e] * 300.;
+			vectorPForEdge[j] = vectorPForEdge[j] * detJ[e] * globalData->Alfa;
 
 		vectorPForEdges.push_back(vectorPForEdge);
 	}
@@ -510,10 +510,10 @@ void Element::calcC(double* x, double* y, const ElementUniwersalny& elUni)
 		//Liczenie macierzy H dla pc[i]
 		for (int i = 0; i < 4; i++)
 		{
-			Cpkt[i][0] = (elUni.N[p][i] * elUni.N[p][0]) * detJPunktow[p] * 7800 * 700;
-			Cpkt[i][1] = (elUni.N[p][i] * elUni.N[p][1]) * detJPunktow[p] * 7800 * 700;
-			Cpkt[i][2] = (elUni.N[p][i] * elUni.N[p][2]) * detJPunktow[p] * 7800 * 700;
-			Cpkt[i][3] = (elUni.N[p][i] * elUni.N[p][3]) * detJPunktow[p] * 7800 * 700;
+			Cpkt[i][0] = (elUni.N[p][i] * elUni.N[p][0]) * detJPunktow[p] * globalData->Density * globalData->SpecificHeat;
+			Cpkt[i][1] = (elUni.N[p][i] * elUni.N[p][1]) * detJPunktow[p] * globalData->Density * globalData->SpecificHeat;
+			Cpkt[i][2] = (elUni.N[p][i] * elUni.N[p][2]) * detJPunktow[p] * globalData->Density * globalData->SpecificHeat;
+			Cpkt[i][3] = (elUni.N[p][i] * elUni.N[p][3]) * detJPunktow[p] * globalData->Density * globalData->SpecificHeat;
 		}
 
 		macierzeCPunktow.push_back(Cpkt);
