@@ -27,13 +27,12 @@ int main()
 #endif
 
 	Mesh siatka;
-	siatka.readMeshFile("Test2_4_4_MixGrid.txt");
-	//siatka.showGlobalData();
-	//siatka.showNodes();
-	//siatka.showElements();
+	siatka.readMeshFile("Test4_31_31_trapez.txt");
 
 	ElementUniwersalny elementUniwersalny;
 	elementUniwersalny.init(3);
+
+	Mesh::calcTemperature(siatka, elementUniwersalny);
 
 	//siatka.calcHForElements(elementUniwersalny);
 
@@ -42,9 +41,6 @@ int main()
 	//siatka.calcVectorPForElements(elementUniwersalny);
 
 	//siatka.calcCForElements(elementUniwersalny);
-
-	Mesh::calcTemperature(siatka, elementUniwersalny);
-
 
 
 	//std::cout << "przestrzen 1d 2 punktowy schemat calkowania" << std::endl;

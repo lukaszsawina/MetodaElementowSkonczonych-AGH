@@ -1,4 +1,2 @@
-﻿  Element.cpp
-D:\DEV\MetodaElementowSkonczonych\MetodaElementowSkonczonych\Element.cpp(77,26): warning C4244: 'initializing': conversion from 'double' to 'size_t', possible loss of data
-D:\DEV\MetodaElementowSkonczonych\MetodaElementowSkonczonych\Element.cpp(78,26): warning C4244: 'initializing': conversion from 'double' to 'size_t', possible loss of data
+﻿  main.cpp
   MetodaElementowSkonczonych.vcxproj -> D:\DEV\MetodaElementowSkonczonych\x64\Debug\MetodaElementowSkonczonych.exe

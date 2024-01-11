@@ -107,7 +107,6 @@ void ElementUniwersalny::init(int n)
 
 	for (int j = 0; j < nPktCalk; j++)
 	{
-
 #ifdef DEBUG_ELEMENT_UNIWERSALNY
 		std::cout << std::endl << "ksi: " << pkt[j][0] << " eta: " << pkt[j][1] << std::endl;
 #endif
